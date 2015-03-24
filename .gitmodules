@@ -1,45 +1,42 @@
-[submodule "link/.vim/bundle/vim-pathogen"]
+[submodule "vim-pathogen"]
 	path = link/.vim/bundle/vim-pathogen
 	url = https://github.com/tpope/vim-pathogen
-[submodule "link/.vim/bundle/vim-go"]
+[submodule "vim-go"]
 	path = link/.vim/bundle/vim-go
 	url = https://github.com/fatih/vim-go
-[submodule "link/.vim/bundle/molokai"]
+[submodule "molokai"]
 	path = link/.vim/bundle/molokai
 	url = https://github.com/fatih/molokai
-[submodule "link/.vim/bundle/neocomplete"]
+[submodule "neocomplete"]
 	path = link/.vim/bundle/neocomplete
 	url = https://github.com/Shougo/neocomplete.vim
-[submodule "link/.vim/bundle/goyo.vim"]
+[submodule "goyo.vim"]
 	path = link/.vim/bundle/goyo.vim
 	url = https://github.com/junegunn/goyo.vim
-[submodule "link/.vim/bundle/github"]
-	path = link/.vim/bundle/github
+[submodule "vim-colors-github"]
+	path = link/.vim/bundle/vim-colors-github
 	url = https://github.com/croaky/vim-colors-github
-[submodule "link/.vim/bundle/badwolf"]
+[submodule "badwolf"]
 	path = link/.vim/bundle/badwolf
-	url = https://github.com/sjl/badwolf/
-[submodule "link/.vim/bundle/peaksea"]
-	path = link/.vim/bundle/peaksea
-	url = https://github.com/vim-scripts/peaksea
-[submodule "link/.vim/bundle/tagbar"]
+	url = https://github.com/sjl/badwolf
+[submodule "tagbar"]
 	path = link/.vim/bundle/tagbar
 	url = https://github.com/majutsushi/tagbar
-[submodule "link/.vim/external-deps/markdown2ctags"]
+[submodule "markdown2ctags"]
 	path = link/.vim/external-deps/markdown2ctags
 	url = https://github.com/jszakmeister/markdown2ctags
-[submodule "link/.vim/bundle/vim-colors-pencil"]
-	path = link/.vim/bundle/vim-colors-pencil
-	url = https://github.com/reedes/vim-colors-pencil
-[submodule "link/.vim/bundle/ctrlp.vim"]
+[submodule "ctrlp.vim"]
 	path = link/.vim/bundle/ctrlp.vim
 	url = https://github.com/kien/ctrlp.vim.git
-[submodule "link/.vim/bundle/tcomment_vim"]
+[submodule "vim-colors-pencil"]
+	path = link/.vim/bundle/vim-colors-pencil
+	url = https://github.com/reedes/vim-colors-pencil
+[submodule "tcomment_vim"]
 	path = link/.vim/bundle/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
-[submodule "link/.vim/bundle/vim-javascript"]
+[submodule "vim-javascript"]
 	path = link/.vim/bundle/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
-[submodule "link/.vim/bundle/vim-jsx"]
+[submodule "vim-jsx"]
 	path = link/.vim/bundle/vim-jsx
 	url = https://github.com/mxw/vim-jsx
