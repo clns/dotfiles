@@ -40,3 +40,6 @@
 [submodule "vim-jsx"]
 	path = link/.vim/bundle/vim-jsx
 	url = https://github.com/mxw/vim-jsx
+[submodule "sh.vim"]
+	path = link/.vim/bundle/sh.vim
+	url = https://github.com/medihack/sh.vim
