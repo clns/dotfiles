@@ -32,10 +32,10 @@ exit 0
 #
 ARGS=$@
 function is_arg() {
-for arg in $ARGS; do
-    [[ $arg == $1 ]] && return 0
-done
-return 1
+    for arg in $ARGS; do
+        [[ $arg == $1 ]] && return 0
+    done
+    return 1
 }
 
 # Show help
@@ -49,46 +49,46 @@ is_arg 'help' && open https://github.com/clns/dotfiles/blob/master/README.md && 
 # Link files.
 function link_header() { log_header "Linking files into home directory"; }
 function link_test() {
-[[ "$1" -ef "$2" ]] && echo "same file"
-return 0
+    [[ "$1" -ef "$2" ]] && echo "same file"
+    return 0
 }
 function link_do() {
-  echo "Linking ~/$1."
-  ln -sf ${2#$HOME/} ~/
+    echo "Linking ~/$1."
+    ln -sf ${2#$HOME/} ~/
 }
 
 # Process files
 function processDir() {
-local base dest skip
-local files=($DOTFILES/$1/*)
-# No files? abort.
-if (( ${#files[@]} == 0 )); then return; fi
-# Run _header function only if declared
-[[ $(declare -f $1_header) ]] && $1_header
-for file in "${files[@]}"; do
-    base="$(basename $file)"
-    dest="$HOME/$base"
-    # Run _test function only if declared
-    if [[ $(declare -f "$1_test") ]]; then
-        # If _test function returns a string, skip file and print that message.
-        skip="$("$1_test" "$file" "$dest")"
-        if [[ "$skip" ]]; then
-            echo "Skipping $dest, $skip"
-            continue
+    local base dest skip
+    local files=($DOTFILES/$1/*)
+    # No files? abort.
+    if (( ${#files[@]} == 0 )); then return; fi
+    # Run _header function only if declared
+    [[ $(declare -f $1_header) ]] && $1_header
+    for file in "${files[@]}"; do
+        base="$(basename $file)"
+        dest="$HOME/$base"
+        # Run _test function only if declared
+        if [[ $(declare -f "$1_test") ]]; then
+            # If _test function returns a string, skip file and print that message.
+            skip="$("$1_test" "$file" "$dest")"
+            if [[ "$skip" ]]; then
+                echo "Skipping $dest, $skip"
+                continue
+            fi
+            # If destination file already exists, back it up.
+            if [[ -e "$dest" ]]; then
+                # Set backup flag so we can print a message at the end
+                backup=1
+                # Create backup dir if doesn't already exist
+                [[ -e $backup_dir ]] || mkdir -p $backup_dir
+                # Backup file / link / whatever
+                mv $dest $backup_dir
+            fi
         fi
-        # If destination file already exists, back it up.
-        if [[ -e "$dest" ]]; then
-            # Set backup flag so we can print a message at the end
-            backup=1
-            # Create backup dir if doesn't already exist
-            [[ -e $backup_dir ]] || mkdir -p $backup_dir
-            # Backup file / link / whatever
-            mv $dest $backup_dir
-        fi
-    fi
-    # Actually process it
-    $1_do $base $file
-done
+        # Actually process it
+        $1_do $base $file
+    done
 }
 
 #
@@ -137,7 +137,7 @@ processDir "link"
 
 # Alert if backups were made.
 if [[ "$backup" ]]; then
-  log_arrow "Backups were moved to ~/${backup_dir#$HOME/}"
+    log_arrow "Backups were moved to ~/${backup_dir#$HOME/}"
 fi
 
 # Run installs

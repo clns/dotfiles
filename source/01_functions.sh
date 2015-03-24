@@ -10,27 +10,27 @@ function log_arrow()    { echo -e "\033[0;34m➜\033[0m $@"; }
 # Test whether a command exists.
 # Args: $1 - cmd to test
 function cmd_exists() {
-if [[ $(type -P $1) ]]; then
-    return 0
-fi
-return 1
+    if [[ $(type -P $1) ]]; then
+        return 0
+    fi
+    return 1
 }
 
 # Test whether a Homebrew formula exists.
 # Args: $1 - formula name to test (may include options)
 function formula_exists() {
-if $(brew list $1 > /dev/null); then
-    return 0
-fi
-return 1
+    if $(brew list $1 > /dev/null); then
+        return 0
+    fi
+    return 1
 }
 
 # OS detection
 function is_osx() {
-[[ "$OSTYPE" =~ ^darwin ]] || return 1
+    [[ "$OSTYPE" =~ ^darwin ]] || return 1
 }
 function is_ubuntu() {
-[[ "$(cat /etc/issue 2> /dev/null)" =~ Ubuntu ]] || return 1
+    [[ "$(cat /etc/issue 2> /dev/null)" =~ Ubuntu ]] || return 1
 }
 
 # Prompt for user confirmation.
@@ -40,22 +40,30 @@ function is_ubuntu() {
 #   if is_confirmed; then echo "confirmed!"; fi
 #
 function prompt() {
-log_warning "$@"
-read -p "Proceed? (y/n): " -n 1
-echo
+    log_warning "$@"
+    read -p "Proceed? (y/n): " -n 1
+    echo
 }
 function is_confirmed() {
-[[ $REPLY =~ ^[Yy]$ ]] || return 1
+    [[ $REPLY =~ ^[Yy]$ ]] || return 1
 }
 
 # Check if array contains value.
 # Usage:
 #
-#   in_array $REQUIREMENTS 'brew' && echo "is in array"
+#   in_array $name ${all_instals[*]} && echo "is in array"
 #
 function in_array() {
-local needle="$1"
-shift
-local haystack=$@
-(echo $haystack | grep -o $needle > /dev/null) || return 1
+    local needle="$1"
+    shift
+    local haystack=$@
+    (echo $haystack | grep -o $needle > /dev/null) || return 1
 }
+
+# Export functions
+export -f log_header log_success log_error log_warning log_arrow
+export -f cmd_exists
+export -f formula_exists
+export -f is_osx is_ubuntu
+export -f prompt is_confirmed
+export -f in_array
