@@ -1,0 +1,45 @@
+[submodule "link/.vim/bundle/vim-pathogen"]
+	path = link/.vim/bundle/vim-pathogen
+	url = https://github.com/tpope/vim-pathogen
+[submodule "link/.vim/bundle/vim-go"]
+	path = link/.vim/bundle/vim-go
+	url = https://github.com/fatih/vim-go
+[submodule "link/.vim/bundle/molokai"]
+	path = link/.vim/bundle/molokai
+	url = https://github.com/fatih/molokai
+[submodule "link/.vim/bundle/neocomplete"]
+	path = link/.vim/bundle/neocomplete
+	url = https://github.com/Shougo/neocomplete.vim
+[submodule "link/.vim/bundle/goyo.vim"]
+	path = link/.vim/bundle/goyo.vim
+	url = https://github.com/junegunn/goyo.vim
+[submodule "link/.vim/bundle/github"]
+	path = link/.vim/bundle/github
+	url = https://github.com/croaky/vim-colors-github
+[submodule "link/.vim/bundle/badwolf"]
+	path = link/.vim/bundle/badwolf
+	url = https://github.com/sjl/badwolf/
+[submodule "link/.vim/bundle/peaksea"]
+	path = link/.vim/bundle/peaksea
+	url = https://github.com/vim-scripts/peaksea
+[submodule "link/.vim/bundle/tagbar"]
+	path = link/.vim/bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
+[submodule "link/.vim/external-deps/markdown2ctags"]
+	path = link/.vim/external-deps/markdown2ctags
+	url = https://github.com/jszakmeister/markdown2ctags
+[submodule "link/.vim/bundle/vim-colors-pencil"]
+	path = link/.vim/bundle/vim-colors-pencil
+	url = https://github.com/reedes/vim-colors-pencil
+[submodule "link/.vim/bundle/ctrlp.vim"]
+	path = link/.vim/bundle/ctrlp.vim
+	url = https://github.com/kien/ctrlp.vim.git
+[submodule "link/.vim/bundle/tcomment_vim"]
+	path = link/.vim/bundle/tcomment_vim
+	url = https://github.com/tomtom/tcomment_vim
+[submodule "link/.vim/bundle/vim-javascript"]
+	path = link/.vim/bundle/vim-javascript
+	url = https://github.com/pangloss/vim-javascript
+[submodule "link/.vim/bundle/vim-jsx"]
+	path = link/.vim/bundle/vim-jsx
+	url = https://github.com/mxw/vim-jsx

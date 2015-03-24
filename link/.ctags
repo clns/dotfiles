@@ -1,0 +1,3 @@
+--langdef=make
+--langmap=make:.mk
+--regex-make=/^\s*([^#][^:]*):/\1/t,target/
