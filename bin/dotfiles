@@ -119,8 +119,10 @@ if [[ ! -d $DOTFILES ]]; then
     cd $DOTFILES
 else
     cd $DOTFILES
-    # git pull
-    # git submodule update --init --recursive
+    if ! is_arg '--fast'; then
+        git pull
+        git submodule update --init --recursive
+    fi
 fi
 
 # Tweak file globbing.
