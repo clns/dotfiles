@@ -51,13 +51,135 @@ function is_confirmed() {
 # Check if array contains value.
 # Usage:
 #
-#   in_array $name ${all_instals[*]} && echo "is in array"
+#   in_array $name ${array[@]} && echo "is in array"
 #
 function in_array() {
-    local needle="$1"
-    shift
-    local haystack=$@
-    (echo $haystack | grep -o $needle > /dev/null) || return 1
+    local needle="$1"; shift
+    local el
+    for el in "$@"; do
+        [[ $el == $needle ]] && return 0
+    done
+    return 1
+}
+
+# Working with command flags and parameters.
+# http://www.shelldorado.com/goodcoding/cmdargs.html
+# 
+# parse_arguments() parses the command arguments for future use.
+#
+# Params:
+# $1 - the count of the OPTIONS array (should be even)
+# $2 - the OPTIONS array
+# $3 - the command arguments ($@)
+#
+# Usage:
+#
+#   OPTIONS=('-h' 'Display this help' '-q' 'Enable quiet/quick mode')
+#   parse_arguments "${#OPTIONS[@]}" "${OPTIONS[@]}" $@
+#
+#   # then you can use the following functions:
+#   has_flag '-h'
+#   has_param 'file'
+#   
+#   # also after calling parse_arguments() the following
+#   # arrays are populated: $FLAGS $PARAMS
+#
+FLAGS=()
+PARAMS=()
+function parse_arguments() {
+    FLAGS=(); PARAMS=()
+    local opts_no=$(($1/2)); shift
+    local opts=() i
+
+    # Store all possible options in opts
+    for ((i=0; i<opts_no; i++)); do
+        opts+=($1)
+        shift; shift # discard next param as it is used for help
+    done
+
+    # Parse each arg given and populate FLAGS and PARAMS.
+    while [ $# -gt 0 ]
+    do
+        if in_array $1 ${opts[@]}; then
+            FLAGS+=($1)
+        elif [[ $1 == "--" ]]; then
+            shift; break
+        elif [[ $1 == -* ]]; then
+            echo "parse_arguments: invalid flag $1"
+            if [[ $(declare -f help) ]]; then
+                help; exit 1
+            else
+                echo "Consider adding a 'help' function that will be called here."
+                exit 1
+            fi
+        else
+            break
+        fi
+        shift
+    done
+    # all command line switches are processed,
+    # "$@" contains all file names
+    PARAMS=($@)
+}
+# Test if a given flag is available.
+# Note: parse_arguments() should be called first.
+#
+# Params:
+# $1 - the flag to test
+#
+# Usage:
+# 
+#   has_flag '-q' && echo "Quiet mode enabled"
+#
+function has_flag() {
+    in_array $1 ${FLAGS[@]} || return 1
+}
+# Test if a given parameter is available.
+# Note: parse_arguments() should be called first.
+#
+# Params:
+# $1 - the parameter to test
+#
+# Usage:
+# 
+#   has_param 'file' && echo "'file' given"
+#
+function has_param() {
+    in_array $1 ${PARAMS[@]} || return 1
+}
+
+# echo_flags prints the available options contained in an OPTIONS array.
+#
+# Params:
+# $1 - separator between flag and description (usually \t)
+# $2 - the OPTIONS array
+#
+# Usage:
+#
+#   OPTIONS=('-h' 'Display this help' '-q' 'Enable quiet/quick mode')
+#   function help() {
+#   cat <<HELP
+#   Command description...
+#   Usage: $(basename "$0") [options]
+#   
+#   Options:
+#   $(echo_flags "\t" "${OPTIONS[@]}")
+#   
+#   HELP
+#   exit 0
+#   }
+#
+function echo_flags() {
+    local separator=$1; shift
+    local values=("$@")
+    local i j
+    local text=""
+
+    for ((i=0; i<$#; i=$(($i+2)))); do
+        j=$(($i+1))
+        text+=${values[i]}"$separator"${values[j]}"\n"
+    done
+    echo -e $text
 }
 
 # Export functions
@@ -67,3 +189,4 @@ export -f formula_exists
 export -f is_osx is_ubuntu
 export -f prompt is_confirmed
 export -f in_array
+export -f parse_arguments has_flag has_param echo_flags

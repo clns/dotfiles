@@ -1,3 +1,6 @@
 .DS_Store
 *.swp
 /backups/
+
+/bin/*
+!/bin/dotfiles

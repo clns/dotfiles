@@ -12,13 +12,13 @@ fi
 # Exit if failed to install
 cmd_exists 'brew' || (log_error "Homebrew failed to install" && return 1)
 
-if ! is_arg '--fast'; then
+if ! has_flag '-q'; then
     log_header "Updating Homebrew"
     brew update
     brew doctor
 fi
 
-if is_arg '-u' || is_arg '--upgrade'; then
+if has_flag '-u'; then
     log_header "Upgrading Homebrew packages"
     brew upgrade
     brew cleanup

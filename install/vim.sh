@@ -17,7 +17,7 @@ if formula_exists 'go'; then
         exit 1
     fi
     u=""
-    if is_arg '-u' || is_arg '--upgrade'; then
+    if has_flag '-u'; then
         u=" -u"
     fi
     go get$u github.com/jstemmer/gotags

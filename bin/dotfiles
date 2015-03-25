@@ -4,19 +4,21 @@ set -e  # exit on first error
 #
 # Handle help
 #
-
+OPTIONS=(
+"-h" "Display this info"
+"-u" "Upgrade installed packages (currently only Homebrew, TODO: Ubuntu)"
+"-q" "Quick mode on (skip some time consuming operations like 'brew update'"
+)
 function help() {
 cat <<HELP
 Usage: $(basename "$0") [options] <command>
 
 Commands:
-  help      Open README in browser
-  install   Install everything
+help      Open README in browser
+install   Install everything
 
 Options:
-  --fast        Skip some time consuming operations like 'brew update'
-  -h, --help    Display this info
-  -u, --upgrade Upgrade installed packages (curently only Homebrew, TODO: Ubuntu)
+$(echo_flags "\t" "${OPTIONS[@]}")
 
 Note: Is recommended to run the command as 'sudo' to allow the scripts
 to configure stuff correctly (eg. PostgreSQL will set timezone=UTC).
@@ -24,23 +26,11 @@ to configure stuff correctly (eg. PostgreSQL will set timezone=UTC).
 HELP
 exit 0
 }
-
-# Check if argument exists in args list.
-# Usage:
-#
-#   if is_arg '--test'; then echo "exits"; fi
-#
-ARGS=$@
-function is_arg() {
-    for arg in $ARGS; do
-        [[ $arg == $1 ]] && return 0
-    done
-    return 1
-}
+parse_arguments "${#OPTIONS[@]}" "${OPTIONS[@]}" $@
 
 # Show help
-(is_arg '-h' || is_arg '--help') && help
-is_arg 'help' && open https://github.com/clns/dotfiles/blob/master/README.md && exit 0
+has_flag '-h' && help
+has_param 'help' && open https://github.com/clns/dotfiles/blob/master/README.md && exit 0
 
 #
 # Functions
@@ -143,14 +133,14 @@ if [[ ! -d $DOTFILES ]]; then
     cd $DOTFILES
 else
     cd $DOTFILES
-    if ! is_arg '--fast'; then
+    if ! has_flag '-q'; then
         git pull
         git submodule update --init --recursive
     fi
 fi
 
 # Stop here if 'install' command wasn't used (eg. the first run from GitHub)
-if ! is_arg 'install'; then
+if ! has_param 'install'; then
     source "link/.bashrc"
     echo "Run 'dotfiles install' to configure everything, or 'dotfiles -h' for help."
     exit 0
@@ -184,7 +174,7 @@ done
 for install in $DOTFILES/install/*; do
     filename=$(basename $install)
     name="${filename%.*}" # get the name of the file without extension
-    if ! in_array $name ${all_instals[*]}; then
+    if ! in_array $name ${all_instals[@]}; then
         source $install
     fi
 done
