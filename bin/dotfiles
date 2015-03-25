@@ -46,6 +46,28 @@ is_arg 'help' && open https://github.com/clns/dotfiles/blob/master/README.md && 
 # Functions
 #
 
+# Copy files.
+function copy_header() { log_header "Copying files into home directory"; }
+function copy_test() {
+    if [[ -e "$2" && ! "$(cmp "$1" "$2" 2> /dev/null)" ]]; then
+        echo "same file"
+    elif [[ "$1" -ot "$2" ]]; then
+        echo "destination file newer"
+    fi
+    return 0
+}
+function copy_do() {
+    echo "Copying ~/$1."
+    cp "$2" ~/
+}
+function copy_postprocess() {
+    if [[ $(basename $1) == ".gitconfig" ]]; then
+        log_arrow "Enter the email address to use in ~/.gitconfig:"
+        read -p ""
+        sed -i -e "s/{EMAIL}/$REPLY/" $1
+    fi
+}
+
 # Link files.
 function link_header() { log_header "Linking files into home directory"; }
 function link_test() {
@@ -88,6 +110,8 @@ function processDir() {
         fi
         # Actually process it
         $1_do $base $file
+        # Do any post-processing
+        [[ $(declare -f "$1_postprocess") ]] && $1_postprocess $dest
     done
 }
 
@@ -141,7 +165,8 @@ shopt -s nullglob
 backup_dir="$DOTFILES/backups/$(date "+%Y_%m_%d-%H_%M_%S")/"
 backup=
 
-# Create the links
+# Process the files
+processDir "copy"
 processDir "link"
 
 # Alert if backups were made.
