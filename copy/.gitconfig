@@ -1,0 +1,18 @@
+[user]
+	name = Calin Seciu
+	email = {EMAIL}
+[core]
+	autocrlf = input
+	fileMode = true
+    editor = vim
+[push]
+	default = simple
+[alias]
+	s = status --short --branch
+	lg = log --oneline --all --graph --decorate
+    unstage = reset HEAD --
+    discard = checkout --
+    # Show files ignored by git
+    ign = ls-files -o -o --exclude-standard
+[pull]
+	rebase = true
