@@ -182,6 +182,15 @@ function echo_flags() {
     echo -e $text
 }
 
+# kill_p kills the given process name
+#
+# Params:
+# $1 - the process to kill (eg. jsx)
+#
+function kill_p() {
+    kill $(ps -A | grep -e $1 | head -1 | awk -F ' ' '{print $1}')
+}
+
 # Export functions
 export -f log_header log_success log_error log_warning log_arrow
 export -f cmd_exists
@@ -190,3 +199,4 @@ export -f is_osx is_ubuntu
 export -f prompt is_confirmed
 export -f in_array
 export -f parse_arguments has_flag has_param echo_flags
+export -f kill_p
