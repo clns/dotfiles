@@ -7,7 +7,7 @@ set -e  # exit on first error
 
 function help() {
 cat <<HELP
-Usage: $(basename "$0") [-h] [-u] <command>
+Usage: $(basename "$0") [options] <command>
 
 Commands:
   help      Open README in browser
