@@ -70,9 +70,9 @@ It will put all necessary binaries in your `$GOBIN`, or `$GOPATH/bin` if not set
 
 ## Credits
 
-https://github.com/cowboy/dotfiles
-https://github.com/kevva/dotfiles
-http://natelandau.com/bash-scripting-utilities/
+https://github.com/cowboy/dotfiles  
+https://github.com/kevva/dotfiles  
+http://natelandau.com/bash-scripting-utilities/  
 
 [copy]: copy
 [link]: link
