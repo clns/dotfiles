@@ -11,7 +11,7 @@ Usage: $(basename "$0") [-h] [-u] <command>
 
 Commands:
   help      Open README in browser
-  install   stuff...
+  install   Install everything
 
 Options:
   --fast        Skip some time consuming operations like 'brew update'
@@ -123,6 +123,12 @@ else
         git pull
         git submodule update --init --recursive
     fi
+fi
+
+# Stop here if 'install' command wasn't used (eg. the first run from GitHub)
+if ! is_arg 'install'; then
+    echo "Run 'dotfiles install' to configure everything, or 'dotfiles -h' for help."
+    exit 0
 fi
 
 # Tweak file globbing.
