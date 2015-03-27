@@ -43,3 +43,12 @@
 [submodule "sh.vim"]
 	path = link/.vim/bundle/sh.vim
 	url = https://github.com/medihack/sh.vim
+[submodule "syntastic"]
+	path = link/.vim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic
+[submodule "vim-misc"]
+	path = link/.vim/bundle/vim-misc
+	url = https://github.com/xolox/vim-misc
+[submodule "vim-session"]
+	path = link/.vim/bundle/vim-session
+	url = https://github.com/xolox/vim-session
