@@ -28,6 +28,7 @@ set lazyredraw		" redraw only when we need to
 set autoread		" Set to auto read when a file is changed from outside
 set so=7		" Set 7 lines to the cursor - when moving verically using j/k
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
+set hidden
 
 let mapleader = ","
 
