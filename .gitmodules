@@ -52,3 +52,6 @@
 [submodule "vim-session"]
 	path = link/.vim/bundle/vim-session
 	url = https://github.com/xolox/vim-session
+[submodule "nerdtree"]
+	path = link/.vim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree
