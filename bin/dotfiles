@@ -155,7 +155,7 @@ fi
 if ! has_param 'install'; then
     source "link/.bashrc"
     echo "Run 'dotfiles install' to configure everything, or 'dotfiles -h' for help."
-    exit 0
+    return 0
 fi
 
 # Tweak file globbing.
