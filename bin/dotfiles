@@ -10,6 +10,7 @@ OPTIONS=(
 "-h" "Display this info"
 "-u" "Upgrade installed packages (currently only Homebrew, TODO: Ubuntu)"
 "-q" "Quick mode on (skip some time consuming operations like 'brew update'"
+"-y" "Answer YES to all questions"
 )
 installs=()
 if [[ -d $DOTFILES ]]; then
