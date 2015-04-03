@@ -1,7 +1,7 @@
 # Install Vim (Linux only, we use MacVim for OS X)
 if is_ubuntu; then
     log_error "TODO: implement this for Ubuntu"
-    exit 1
+    return 0
 fi
 
 # Install go-deps
@@ -14,7 +14,7 @@ if formula_exists 'go'; then
         fi
     elif is_ubuntu; then
         log_error "TODO: implement this for Ubuntu"
-        exit 1
+        return 0
     fi
     u=""
     if has_flag '-u'; then

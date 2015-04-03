@@ -1,10 +1,12 @@
 # Install PostgreSQL
 
 if is_osx && ! formula_exists 'postgresql'; then
+    prompt "Install PostgreSQL."
+    if ! is_confirmed; then return 0; fi
     brew install postgresql
 elif is_ubuntu; then
     log_error "TODO: implement this for Ubuntu"
-    exit 1
+    return 0
 else
     log_arrow "PostgreSQL is installed"
 fi
