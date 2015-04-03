@@ -25,6 +25,21 @@ function formula_exists() {
     return 1
 }
 
+# Check if a given npm package is installed
+# Params:
+#   $1 - the npm package name (eg. "flow-bin")
+#   $2... - args to pass to npm
+#
+# Usage:
+#
+#   npm_exists "flow-bin"
+#   npm_exists "flow-bin" "-g"
+#
+function npm_exists() {
+    local pkg=$1; shift
+    [[ $(npm ls "$pkg" "$@") ]] || return 1
+}
+
 # OS detection
 function is_osx() {
     [[ "$OSTYPE" =~ ^darwin ]] || return 1
@@ -41,10 +56,17 @@ function is_ubuntu() {
 #
 function prompt() {
     log_warning "$@"
-    read -p "Proceed? (y/n): " -n 1
+    if [[ $(declare -f has_flag) ]] && has_flag '-y'; then
+        echo "Proceed since '-y' was given."
+    else
+        read -p "Proceed? (y/n): " -n 1
+    fi
     echo
 }
 function is_confirmed() {
+    if [[ $(declare -f has_flag) ]] && has_flag '-y'; then
+        return 0
+    fi
     [[ $REPLY =~ ^[Yy]$ ]] || return 1
 }
 
@@ -193,8 +215,7 @@ function kill_p() {
 
 # Export functions
 export -f log_header log_success log_error log_warning log_arrow
-export -f cmd_exists
-export -f formula_exists
+export -f cmd_exists formula_exists npm_exists
 export -f is_osx is_ubuntu
 export -f prompt is_confirmed
 export -f in_array
