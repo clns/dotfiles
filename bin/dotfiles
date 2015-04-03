@@ -75,13 +75,13 @@ function link_test() {
     return 0
 }
 function link_do() {
-    echo "Linking ~/$1."
+    echo "Linking ~/$1"
     ln -sf ${2#$HOME/} ~/
 }
 
 # Process files
 function processDir() {
-    local base dest skip
+    local base ext dest skip
     local files=($DOTFILES/$1/*)
     # No files? abort.
     if (( ${#files[@]} == 0 )); then return; fi
@@ -89,6 +89,10 @@ function processDir() {
     [[ $(declare -f $1_header) ]] && $1_header
     for file in "${files[@]}"; do
         base="$(basename $file)"
+        ext="${file##*.}"
+        if [[ $ext == 'swp' ]]; then
+            continue # skip Vim swap files
+        fi
         dest="$HOME/$base"
         # Run _test function only if declared
         if [[ $(declare -f "$1_test") ]]; then
