@@ -3,6 +3,15 @@ set -e  # exit on first error
 
 DOTFILES=~/.dotfiles
 
+# Source utility functions if doesn't exist
+if [[ ! $(type -t 'cmd_exists') ]]; then
+    if [[ -f "$DOTFILES/source/01_functions.sh" ]]; then
+        source "$DOTFILES/source/01_functions.sh"
+    else
+        bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/clns/dotfiles/master/source/01_functions.sh')"
+    fi
+fi
+
 #
 # Handle help
 #
@@ -122,15 +131,6 @@ function processDir() {
 #
 # Do some stuff
 #
-
-# Source utility functions if doesn't exist
-if [[ ! $(type -t 'cmd_exists') ]]; then
-    if [[ -f "$DOTFILES/source/01_functions.sh" ]]; then
-        source "$DOTFILES/source/01_functions.sh"
-    else
-        bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/clns/dotfiles/master/source/01_functions.sh')"
-    fi
-fi
 
 # If git is not installed, install it (Ubuntu only since OS X has it installed by default)
 if ! cmd_exists 'git' && is_ubuntu; then
