@@ -55,3 +55,6 @@
 [submodule "nerdtree"]
 	path = link/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree
+[submodule "vim-flow"]
+	path = link/.vim/bundle/vim-flow
+	url = https://github.com/facebook/vim-flow
