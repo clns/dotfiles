@@ -170,8 +170,8 @@ backup_dir="$DOTFILES/backups/$(date "+%Y_%m_%d-%H_%M_%S")/"
 backup=
 
 # Process the files
-has_param 'copy' && processDir "copy"
-has_param 'link' && processDir "link"
+if has_param 'copy'; then processDir "copy"; fi
+if has_param 'link'; then processDir "link"; fi
 
 # Alert if backups were made.
 if [[ "$backup" ]]; then
