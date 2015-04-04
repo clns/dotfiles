@@ -8,7 +8,7 @@ if [[ ! $(type -t 'cmd_exists') ]]; then
     if [[ -f "$DOTFILES/source/01_functions.sh" ]]; then
         source "$DOTFILES/source/01_functions.sh"
     else
-        bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/clns/dotfiles/master/source/01_functions.sh')"
+        eval "$(curl -fsSL 'https://raw.githubusercontent.com/clns/dotfiles/master/source/01_functions.sh')"
     fi
 fi
 
