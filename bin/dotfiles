@@ -33,7 +33,9 @@ Usage: $(basename "$0") [options] <command> [...args]
 
 Commands:
 help      Open README in browser
-install   Install everything; if additional args are given, it will install only those installs; 
+link      Link step
+copy      Copy step
+install   Install step; if additional args are given, it will install only those installs; 
           possible args: $(echo "${installs[@]}")
 
 Options:
@@ -153,10 +155,10 @@ else
     fi
 fi
 
-# Stop here if 'install' command wasn't used (eg. the first run from GitHub)
-if ! has_param 'install'; then
+# Stop here if no command was used (eg. the first run from GitHub)
+if [[ ${#PARAMS[@]} == 0 ]]; then
     source "link/.bashrc"
-    echo "Run 'dotfiles install' to configure everything, or 'dotfiles -h' for help."
+    echo "Run 'dotfiles <command>' to configure further, or 'dotfiles -h' for help."
     exit 0
 fi
 
@@ -170,8 +172,8 @@ backup_dir="$DOTFILES/backups/$(date "+%Y_%m_%d-%H_%M_%S")/"
 backup=
 
 # Process the files
-processDir "copy"
-processDir "link"
+has_param 'copy' && processDir "copy"
+has_param 'link' && processDir "link"
 
 # Alert if backups were made.
 if [[ "$backup" ]]; then
@@ -179,15 +181,17 @@ if [[ "$backup" ]]; then
 fi
 
 # Run installs
-requirements=(brew)
-development=(node go postgresql macvim vim fonts)
-if [[ ${#PARAMS[@]} > 1 ]]; then
-    all_instals=("${PARAMS[@]:1}")
-else
-    all_instals=("${requirements[*]}" "${development[*]}")
+if has_param 'install'; then
+    requirements=(brew)
+    development=(node go postgresql macvim vim fonts)
+    if [[ ${#PARAMS[@]} > 1 ]]; then
+        all_instals=("${PARAMS[@]:1}")
+    else
+        all_instals=("${requirements[*]}" "${development[*]}")
+    fi
+    for install in ${all_instals[@]}; do
+        source "install/${install}.sh"
+    done
 fi
-for install in ${all_instals[@]}; do
-    source "install/${install}.sh"
-done
 
 source "link/.bashrc"
