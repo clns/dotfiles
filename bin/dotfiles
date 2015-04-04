@@ -135,7 +135,9 @@ function processDir() {
 # If git is not installed, install it (Ubuntu only since OS X has it installed by default)
 if ! cmd_exists 'git' && is_ubuntu; then
     log_header "Installing git"
-    sudo apt-get -qq install git-core
+    add-apt-repository -y ppa:git-core/ppa # Git repository
+    apt-get update
+    apt-get install -y git
 fi
 
 # Clone the repo or update if already cloned
