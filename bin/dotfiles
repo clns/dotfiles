@@ -143,7 +143,7 @@ fi
 # Clone the repo or update if already cloned
 if [[ ! -d $DOTFILES ]]; then
     # $DOTFILES directory doesn't exist, clone it
-    git clone --recursive https://github.com/clns/dotfiles $DOTFILES
+    git clone https://github.com/clns/dotfiles $DOTFILES
     cd $DOTFILES
 else
     cd $DOTFILES
@@ -157,7 +157,7 @@ fi
 if ! has_param 'install'; then
     source "link/.bashrc"
     echo "Run 'dotfiles install' to configure everything, or 'dotfiles -h' for help."
-    return 0
+    exit 0
 fi
 
 # Tweak file globbing.
