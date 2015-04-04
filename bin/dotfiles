@@ -155,11 +155,9 @@ else
     fi
 fi
 
-# Stop here if no command was used (eg. the first run from GitHub)
+# If no command was used (eg. the first run from GitHub)
 if [[ ${#PARAMS[@]} == 0 ]]; then
-    source "link/.bashrc"
     echo "Run 'dotfiles <command>' to configure further, or 'dotfiles -h' for help."
-    exit 0
 fi
 
 # Tweak file globbing.
