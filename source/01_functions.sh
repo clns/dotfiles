@@ -37,7 +37,7 @@ function formula_exists() {
 #
 function npm_exists() {
     local pkg=$1; shift
-    [[ $(npm ls "$pkg" "$@") ]] || return 1
+    npm ls "$pkg" "$@" &>/dev/null || return 1
 }
 
 # OS detection
@@ -213,6 +213,32 @@ function kill_p() {
     kill $(ps -A | grep -e $1 | head -1 | awk -F ' ' '{print $1}')
 }
 
+# path_add adds a directory to PATH if not already present.
+# Note that the directory needs to exist.
+# http://superuser.com/a/39995
+#
+# Usage:
+#
+#   if path_add "/dir"; then
+#     echo $PATH >> ~/.bashrc
+#   fi
+#
+function path_add() {
+    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+        # adds the dir to the end of the path
+        # to put at the beginning use `PATH="$1:$PATH"
+        PATH="${PATH:+"$PATH:"}$1"
+        return 0
+    fi
+    return 1
+}
+
+# Check if a given apt-repository is already added as a source.
+# http://stackoverflow.com/a/12739281/1104534
+function apt_repository_exists() {
+    grep -h ^deb /etc/apt/sources.list /etc/apt/sources.list.d/* | grep -- $1 || return 1
+}
+
 # Export functions
 export -f log_header log_success log_error log_warning log_arrow
 export -f cmd_exists formula_exists npm_exists
@@ -221,3 +247,5 @@ export -f prompt is_confirmed
 export -f in_array
 export -f parse_arguments has_flag has_param echo_flags
 export -f kill_p
+export -f path_add
+export -f apt_repository_exists
