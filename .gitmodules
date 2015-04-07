@@ -58,3 +58,6 @@
 [submodule "vim-flow"]
 	path = link/.vim/bundle/vim-flow
 	url = https://github.com/facebook/vim-flow
+[submodule "editorconfig-vim"]
+	path = link/.vim/bundle/editorconfig-vim
+	url = https://github.com/editorconfig/editorconfig-vim
