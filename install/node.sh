@@ -27,6 +27,10 @@ if ! npm_exists "npm" "-g" || has_flag '-u'; then
     prompt "Install/update npm"
     if is_confirmed; then
         sudo npm install npm -g
+
+        # For some reason ~/.npm/_locks has root:root instead of current user
+        # Fix the chown here but might looks into the root problem later
+        sudo chmod $(whoami):$(whoami) -R ~/.npm
     fi
 elif npm_exists "npm" "-g"; then
     log_arrow "$(npm ls npm -g | grep npm) is installed"
