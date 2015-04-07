@@ -2,49 +2,38 @@
 
 ## Getting Started
 
-To get started run the following commands in Terminal:
+To get started run the following command in Terminal:
 
 ```sh
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/clns/dotfiles/master/bin/dotfiles)"
-dotfiles install
 ```
 
-The first command will only clone the repository into ~/.dotfiles and make the `dotfiles`
-command available in the shell. The second command will link everything into the $HOME directory
-and install stuff.
+This command will clone the repository into `~/.dotfiles` and make the `dotfiles`
+command available in the shell. It will also install git if not available (eg. on Ubuntu).
 
-For help use `dotfiles -h`.
+For detailed usage use `dotfiles -h`.
+
+## Usage Example
+
+A common example usage that configures and installs everything using user interaction is:
+
+```sh
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/clns/dotfiles/master/bin/dotfiles)"
+dotfiles copy link
+dotfiles -q install
+```
 
 ## About
 
 This repository contains scripts to automate the installation and configuration of various
 stuff I use while developing, mainly on OS X. Ubuntu is also supported.
 
-The heart of the project is the [`dotfiles`](bin/dotfiles) command. On first run it does:
-
-1. On Ubuntu, installs git via APT if not there (on OS X it's bundled by default)
-2. Clones the repository into ~/.dotfiles
-3. Copies files from [`/copy`][copy] into `~/` ([read more](#the-copy-step))
-4. Links files from [`/link`][link] into `~/` ([read more](#the-link-step))
-5. Installs stuff from the [`/install`][install] directory ([read more](#the-install-step))
-
-On subsequent runs, step 1 is skipped and step 2 just updates the repository with `git pull`.
-The other steps are the same, but it only copies/links/installs stuff that changed or
-is not yet installed.
-
-### Other Directories
-
-* The `/backups` directory is created when necessary and it's used to store any file that may get
-overwritten in the link or copy steps.
-* The `/bin` directory contains executable shell scripts, including the `dotfiles` command.
-This directory is added to the PATH.
-* The `/source` directory contains files that are sourced whenever a new shell is opened.
-This happens in alphanumeric order, hence the funky names.
+The heart of the project is the [`dotfiles`](bin/dotfiles) command.
 
 ### The "copy" step
 
 Any files in the [`/copy`][copy] directory will be copied to `~/`. For example `.gitconfig` contains
-your email address so it's not a good idea to modify it directly in the /link directory
+your email address so it's not a good idea to modify it directly in the `/link` directory
 because you may accidentally add it to the repository.
 
 ### The "link" step
@@ -54,10 +43,17 @@ contain any sensitive information.
 
 ### The "install" step
 
-Any files in the [`/install`][install] directory will get sourced and will install/update stuff.
+Any files in the [`/install`][install] directory will get sourced and will install/update stuff. 
+You can specify which things to install by appending arguments to the install command.
 
-TODO: Decide how to make this step customizable so the user can choose what to install. Maybe
-we can just use interactivity while fetching all the scripts from the /install directory.
+### Other Directories
+
+* The `/backups` directory is created when necessary and it's used to store any file that may get
+overwritten in the link or copy steps.
+* The `/bin` directory contains executable shell scripts, including the `dotfiles` command.
+This directory is added to the PATH.
+* The `/source` directory contains files that are sourced whenever a new shell is opened.
+This happens in alphanumeric order, hence the funky names.
 
 ### Vim Setup
 
