@@ -5,6 +5,8 @@
     autocrlf = input
     fileMode = true
     editor = vim
+[color]
+    ui = auto
 [push]
     default = simple
 [alias]
