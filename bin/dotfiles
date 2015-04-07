@@ -128,6 +128,25 @@ function processDir() {
     return 0
 }
 
+# http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
+function gitInBash() {
+    local file="git-completion.bash"
+    local path=$HOME/.$file
+    if [ ! -e $path ] || has_flag '-u'; then
+        curl "https://raw.githubusercontent.com/git/git/master/contrib/completion/$file" \
+        -z "$path" -o "$path" --silent --location
+        echo "$path saved"
+    fi
+
+    local file="git-prompt.sh"
+    local path=$HOME/.$file
+    if [ ! -e $path ] || has_flag '-u'; then
+        curl "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh" \
+        -z "$path" -o "$path" --silent --location
+        echo "$path saved"
+    fi
+}
+
 #
 # Do some stuff
 #
@@ -158,6 +177,10 @@ fi
 # If no command was used (eg. the first run from GitHub)
 if [[ ${#PARAMS[@]} == 0 ]]; then
     echo "Run 'dotfiles <command>' to configure further, or 'dotfiles -h' for help."
+fi
+
+if ! has_flag '-q' && (has_param 'copy' || has_param 'link'); then
+    gitInBash
 fi
 
 # Tweak file globbing.
