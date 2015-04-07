@@ -17,8 +17,10 @@ fi
 #
 OPTIONS=(
 "-h" "Display this info"
-"-u" "Upgrade installed packages (currently only Homebrew, TODO: Ubuntu)"
-"-q" "Quick mode on (skip some time consuming operations like 'brew update'"
+"-u" "Upgrade installed packages (for more details search for has_flag '-u'\n
+\tin the repo to see who implements this)"
+"-q" "Quick mode on - skip some time consuming operations like 'brew update'\n
+\t(for more details search for has_flag '-q' in the repo to see who implements this)"
 "-y" "Answer YES to all questions"
 )
 installs=()
@@ -33,13 +35,22 @@ Usage: $(basename "$0") [options] <command> [...args]
 
 Commands:
 help      Open README in browser
-link      Link step
-copy      Copy step
-install   Install step; if additional args are given, it will install only those installs; 
+link      This will symlink all the files from $DOTFILES/link/ into ~/,
+          only if files have changed
+copy      This will copy all the files from $DOTFILES/copy/ into ~/,
+          only if files have changed
+install   This will install all the things from $DOTFILES/install/;
+          to prevent installing everything, specify arguments;
           possible args: $(echo "${installs[@]}")
 
 Options:
 $(echo_flags "\t" "${OPTIONS[@]}")
+
+Notes:
+- If 'link' or 'copy' commands are given, it will also configure
+git-completion and git-prompt for use in the bash shell. See
+http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
+
 
 HELP
 exit 0
@@ -206,7 +217,7 @@ fi
 # Run installs
 if has_param 'install'; then
     requirements=(brew)
-    development=(node go postgresql macvim vim fonts)
+    development=(node go postgresql macvim nginx vim fonts)
     if [[ ${#PARAMS[@]} > 1 ]]; then
         all_instals=("${PARAMS[@]:1}")
     else
