@@ -3,5 +3,3 @@
 /backups/
 /link/.vim/sessions/
 
-/bin/*
-!/bin/dotfiles
