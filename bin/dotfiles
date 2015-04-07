@@ -170,7 +170,9 @@ else
     cd $DOTFILES
     if ! has_flag '-q'; then
         git pull
-        git submodule update --init --recursive
+        if has_param 'link' || has_param 'copy'; then
+            git submodule update --init --recursive
+        fi
     fi
 fi
 
