@@ -19,5 +19,5 @@ if [ -e "$GIT_PROMPT" ]; then
     export GIT_PS1_SHOWUPSTREAM="auto"
     export GIT_PS1_SHOWCOLORHINTS=1
     # export PS1='\w$(__git_ps1 " (%s)")\$ '
-    PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
+    PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'";$PROMPT_COMMAND"
 fi
