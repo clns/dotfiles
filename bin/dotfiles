@@ -217,7 +217,7 @@ fi
 # Run installs
 if has_param 'install'; then
     requirements=(brew)
-    development=(node go postgresql macvim nginx vim fonts)
+    development=(atom node go postgresql macvim nginx vim fonts)
     if [[ ${#PARAMS[@]} > 1 ]]; then
         all_instals=("${PARAMS[@]:1}")
     else
