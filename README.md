@@ -11,17 +11,20 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/clns/dotfiles/master/bin
 This command will clone the repository into `~/.dotfiles` and make the `dotfiles`
 command available in the shell. It will also install git if not available (eg. on Ubuntu).
 
-For detailed usage use `dotfiles -h`.
-
-## Usage Example
-
-A common example usage that configures and installs everything using user interaction is:
+To configure and install everything using user interaction run:
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/clns/dotfiles/master/bin/dotfiles)"
 dotfiles copy link
 dotfiles -q install
 ```
+
+For detailed usage use `dotfiles -h`.
+
+### Windows
+
+On Windows, you need to configure everything manually. See the 
+[Setting up on Windows](https://github.com/clns/dotfiles/wiki/Setting-up-on-Windows)
+page in the Wiki.
 
 ## About
 
