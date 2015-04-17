@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+### Unix
+
 To get started run the following command in Terminal:
 
 ```sh
