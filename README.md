@@ -23,7 +23,7 @@ For detailed usage use `dotfiles -h`.
 ### Windows
 
 On Windows, you need to configure everything manually. See the 
-[Setting up on Windows](https://github.com/clns/dotfiles/wiki/Setting-up-on-Windows)
+[Setting up on Windows](../../wiki/Setting-up-on-Windows)
 page in the Wiki.
 
 ## About
