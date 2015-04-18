@@ -1,7 +1,5 @@
 # http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
 
-alias g='git'
-
 GIT_COMPLETION="$HOME/.git-completion.bash"
 GIT_PROMPT="$HOME/.git-prompt.sh"
 
