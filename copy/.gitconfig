@@ -4,7 +4,7 @@
 [core]
     autocrlf = input
     fileMode = true
-    editor = atom --wait
+    editor = vim
 [color]
     ui = auto
 [push]
@@ -12,6 +12,9 @@
 [alias]
     s = status --short --branch
     lg = log --oneline --all --graph --decorate
+    # http://stackoverflow.com/a/9074343/1104534
+    lga = log --all --graph --format=format:'%C(dim white)%h%C(reset) %C(bold black)[%cr] %an%C(reset)%C(auto)%d%C(reset)%n        %s'
+    lgaf = log --name-status --all --graph --format=format:'%C(dim white)%h%C(reset) %C(bold black)[%cr] %an%C(reset)%C(auto)%d%C(reset): %s%n'
     unstage = reset HEAD --
     discard = checkout --
     # Show files ignored by git
