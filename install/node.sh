@@ -1,47 +1,64 @@
-# Install node.js
+#!/bin/sh
 
-if is_osx && ! formula_exists 'node'; then
-    log_warning "TODO: Install node.js"
-elif is_ubuntu && ! cmd_exists 'node'; then
-    prompt "Install node.js"
-    if is_confirmed; then
-        NODE_VERSION="0.12.2"
-        cd /tmp
-        wget "http://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz"
-        sudo tar -C /usr/local -xzf node-v${NODE_VERSION}-linux-x64.tar.gz
-        sudo mv "/usr/local/node-v${NODE_VERSION}-linux-x64" "/usr/local/node"
-        rm node-v${NODE_VERSION}-linux-x64.tar.gz
-        if path_add "/usr/local/node/bin"; then
-            echo "PATH=$PATH" >> ~/.bashrc
-        fi
-        sudo ln -s /usr/local/node/bin/node /usr/bin/node
-        sudo ln -s /usr/local/node/lib/node /usr/lib/node
-        sudo ln -s /usr/local/node/bin/npm /usr/bin/npm
-    fi
-else
-    log_arrow "Node is installed"
+# Install latest node.js and npm according to
+# https://gist.github.com/isaacs/579814
+
+script_name=node.sh
+script_tmp=node-install-$$.sh
+
+if [ "x$0" = "xsh" ]; then
+  # run as curl | sh
+  # on some systems, you can just do cat>npm-install.sh
+  # which is a bit cuter.  But on others, &1 is already closed,
+  # so catting to another script file won't do anything.
+  # Follow Location: headers, and fail on errors
+  curl -f -L -s \
+    https://raw.githubusercontent.com/clns/dotfiles/master/install/$script_name \
+    > $script_tmp
+  ret=$?
+  if [ $ret -eq 0 ]; then
+    (exit 0)
+  else
+    rm $script_tmp
+    echo "Failed to download script" >&2
+    exit $ret
+  fi
+  sh $script_tmp
+  ret=$?
+  rm $script_tmp
+  exit $ret
 fi
 
-# Install/update npm
-if ! npm_exists "npm" "-g" || has_flag '-u'; then
-    prompt "Install/update npm"
-    if is_confirmed; then
-        sudo npm install npm -g
+case "$(uname -s)" in
 
-        # For some reason ~/.npm/_locks has root:root instead of current user
-        # Fix the chown here but might look into the root problem later
-        sudo chown $(whoami):$(whoami) -R ~/.npm
-    fi
-elif npm_exists "npm" "-g"; then
-    log_arrow "$(npm ls npm -g | grep npm) is installed"
-fi
+  Darwin)
+    echo 'TODO: Mac OS X'
+    exit 1
+    # brew install node
+    ;;
 
-# Install/update flow-bin
-if ! npm_exists "flow-bin" "-g" || has_flag '-u'; then
-    prompt "Install/update flow-bin."
-    if is_confirmed; then
-        sudo npm install flow-bin -g
+  Linux)
+    if [ $(which apt-get) ]; then
+      sudo apt-get install -y build-essential g++
+    elif [ $(which yum) ]; then
+      echo 'Nothing to do for yum?!'
     fi
-elif npm_exists "flow-bin" "-g"; then
-    log_arrow "$(npm ls flow-bin -g | grep flow-bin) is installed"
-fi
+
+    echo 'export PATH=$HOME/local/bin:$PATH' >> $HOME/.bashrc
+    . $HOME/.bashrc
+    mkdir $HOME/local
+    mkdir $HOME/node-latest-install
+    cd $HOME/node-latest-install
+    curl -L -# http://nodejs.org/dist/node-latest.tar.gz | tar xz --strip-components=1
+    ./configure --prefix=$HOME/local
+    make install
+    curl -L -# https://www.npmjs.org/install.sh | sh
+    ret=$?
+    exit $ret
+    ;;
+
+  *)
+    echo "$script_name is only supported on Mac OS X and Linux" >&2
+    exit 1
+    ;;
+esac
