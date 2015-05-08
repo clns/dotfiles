@@ -44,8 +44,8 @@ case "$(uname -s)" in
       echo 'Nothing to do for yum?!'
     fi
 
-    echo 'export PATH=$HOME/local/bin:$PATH' >> $HOME/.bashrc
-    . $HOME/.bashrc
+    echo 'export PATH=$HOME/local/bin:$PATH' >> $HOME/.profile
+    . $HOME/.profile
     mkdir $HOME/local
     mkdir $HOME/node-latest-install
     cd $HOME/node-latest-install
