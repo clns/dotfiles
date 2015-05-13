@@ -38,7 +38,7 @@ case "$(uname -s)" in
 
   Linux)
     if [ $(which apt-get) ]; then
-      sudo apt-get -u install ant
+      sudo apt-get -u install -y ant
     elif [ $(which yum) ]; then
       echo "nothing to do for yum?!"
     else
