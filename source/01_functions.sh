@@ -86,7 +86,7 @@ function in_array() {
 
 # Working with command flags and parameters.
 # http://www.shelldorado.com/goodcoding/cmdargs.html
-# 
+#
 # parse_arguments() parses the command arguments for future use.
 #
 # Params:
@@ -102,7 +102,7 @@ function in_array() {
 #   # then you can use the following functions:
 #   has_flag '-h'
 #   has_param 'file'
-#   
+#
 #   # also after calling parse_arguments() the following
 #   # arrays are populated: $FLAGS $PARAMS
 #
@@ -150,7 +150,7 @@ function parse_arguments() {
 # $1 - the flag to test
 #
 # Usage:
-# 
+#
 #   has_flag '-q' && echo "Quiet mode enabled"
 #
 function has_flag() {
@@ -163,7 +163,7 @@ function has_flag() {
 # $1 - the parameter to test
 #
 # Usage:
-# 
+#
 #   has_param 'file' && echo "'file' given"
 #
 function has_param() {
@@ -183,10 +183,10 @@ function has_param() {
 #   cat <<HELP
 #   Command description...
 #   Usage: $(basename "$0") [options]
-#   
+#
 #   Options:
 #   $(echo_flags "\t" "${OPTIONS[@]}")
-#   
+#
 #   HELP
 #   exit 0
 #   }
