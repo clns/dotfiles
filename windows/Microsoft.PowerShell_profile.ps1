@@ -13,6 +13,19 @@ function ..() { cd .. }
 function mkdirp($path) {
 	New-Item -Force -Type directory -Path $path
 }
+function reload() { . $PROFILE }
+
+# Vagrant aliases
+function vs() { vagrant status }
+function vup() { vagrant up }
+function vh() { vagrant halt }
+function vsus() { vagrant suspend }
+function vres() { vagrant resume }
+function vr() { vagrant reload }
+function vssh() { vagrant ssh }
+function vp() { vagrant provision }
+function vd() { vagrant destroy }
+function vdd() { vagrant destroy -f }
 
 # Other functions
 Function Format-FileSize() {
