@@ -7,7 +7,7 @@
 To get started run the following command in Terminal:
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/clns/dotfiles/master/bin/dotfiles)"
+curl https://raw.githubusercontent.com/clns/dotfiles/master/bin/dotfiles | bash && . ~/.bashrc
 ```
 
 This command will clone the repository into `~/.dotfiles` and make the `dotfiles`
@@ -24,7 +24,7 @@ For detailed usage use `dotfiles -h`.
 
 ### Windows
 
-On Windows, you need to configure everything manually. See the 
+On Windows, you need to configure everything manually. See the
 [Setting up on Windows](../../wiki/Setting-up-on-Windows)
 page in the Wiki.
 
@@ -48,7 +48,7 @@ contain any sensitive information.
 
 ### The "install" step
 
-Any files in the [`/install`][install] directory will get sourced and will install/update stuff. 
+Any files in the [`/install`][install] directory will get sourced and will install/update stuff.
 You can specify which things to install by appending arguments to the install command.
 
 ### Other Directories
