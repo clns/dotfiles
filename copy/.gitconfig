@@ -19,5 +19,6 @@
     discard = checkout --
     # Show files ignored by git
     ign = ls-files -o -o --exclude-standard
+    size = count-objects -H
 [pull]
     rebase = true
