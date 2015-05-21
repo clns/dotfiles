@@ -1,3 +1,4 @@
+# http://www.debian-administration.org/article/317/An_introduction_to_bash_completion_part_2
 _dotfiles() {
     # Pointer to current and prev completion words
     local cur="${COMP_WORDS[COMP_CWORD]}"
