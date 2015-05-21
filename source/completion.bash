@@ -19,11 +19,17 @@ _dotfiles() {
             done
             COMPREPLY=( $(compgen -W "${args}" -- ${cur}) )
             return 0
-      			;;
+      		;;
         hub-as-git)
             local args="on off"
             COMPREPLY=( $(compgen -W "${args}" -- ${cur}) )
             return 0
+            ;;
+        help)
+            local args="hub"
+            COMPREPLY=( $(compgen -W "${args}" -- ${cur}) )
+            return 0
+            ;;
     esac
 
     return 0

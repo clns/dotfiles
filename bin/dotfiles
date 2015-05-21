@@ -36,7 +36,8 @@ Usage:
  $(basename "$0") [options] <command> [...args]
 
 Commands:
- help         Open README in browser
+ help         Open README in browser if no args are given;
+              possible args (optional): hub
  link         Symlink all the files from ~/.dotfiles/link/ into ~/, backing
               up original files in ~/.dotfiles/backups/, if any
  copy         Copy all the files from ~/.dotfiles/copy/ into ~/, backing
@@ -215,7 +216,12 @@ backup=
 
 case "$1" in
     help)
-        open https://github.com/clns/dotfiles/blob/master/README.md ; exit 0
+        case "$2" in
+            hub)
+                open https://github.com/github/hub#commands ; exit 0 ;;
+            *)
+                open https://github.com/clns/dotfiles/blob/master/README.md ; exit 0 ;;
+        esac
         ;;
     link)
         processDir "link"
