@@ -64,3 +64,6 @@
 [submodule "oh-my-zsh"]
 	path = link/.oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh
+[submodule "bash-it"]
+	path = link/.bash_it
+	url = https://github.com/Bash-it/bash-it
