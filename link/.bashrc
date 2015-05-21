@@ -31,8 +31,8 @@ local file
 if [[ "$1" ]]; then
     source "$DOTFILES/source/$1"
 else
-    for file in $DOTFILES/source/*; do
-        if [ -f "$file" ]; then
+    for file in $DOTFILES/source/*.{sh,bash}; do
+        if [ -e "$file" ]; then
             source "$file"
         fi
     done
