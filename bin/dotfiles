@@ -1,15 +1,33 @@
 #!/usr/bin/env bash
-set -e  # exit on first error
 
-DOTFILES=~/.dotfiles
+script_name=dotfiles
+script_tmp=dotfiles-install-$$
 
-# Source utility functions if doesn't exist
-if [[ ! $(type -t 'cmd_exists') ]]; then
-    if [[ -f "$DOTFILES/source/01_functions.sh" ]]; then
-        source "$DOTFILES/source/01_functions.sh"
-    else
-        eval "$(curl -fsSL 'https://raw.githubusercontent.com/clns/dotfiles/master/source/01_functions.sh')"
-    fi
+if [ "x$0" = "xsh" ]; then
+  # run as curl | sh
+  # on some systems, you can just do cat>npm-install.sh
+  # which is a bit cuter.  But on others, &1 is already closed,
+  # so catting to another script file won't do anything.
+  # Follow Location: headers, and fail on errors
+  curl -f -L -s \
+    https://raw.githubusercontent.com/clns/dotfiles/master/bin/$script_name \
+    > $script_tmp
+  ret=$?
+  if [ $ret -eq 0 ]; then
+    (exit 0)
+  else
+    rm $script_tmp
+    echo "Failed to download script" >&2
+    exit $ret
+  fi
+  sh $script_tmp
+  ret=$?
+  rm $script_tmp
+  exit $ret
+fi
+
+if [ -z "$DOTFILES" ]; then
+    DOTFILES=$HOME/.dotfiles
 fi
 
 #
@@ -24,7 +42,7 @@ OPTIONS=(
 "-y" "Answer YES to all questions"
 )
 installs=()
-if [[ -d $DOTFILES ]]; then
+if [ -d $DOTFILES ]; then
     for inst in $DOTFILES/install/*; do
         inst=$(basename "$inst"); installs+=("${inst%.*}")
     done
@@ -34,39 +52,45 @@ cat <<HELP
 Usage: $(basename "$0") [options] <command> [...args]
 
 Commands:
-help      Open README in browser
-link      This will symlink all the files from $DOTFILES/link/ into ~/,
-          only if files have changed
-copy      This will copy all the files from $DOTFILES/copy/ into ~/,
-          only if files have changed
-install   This will install all the things from $DOTFILES/install/;
-          to prevent installing everything, specify arguments;
-          possible args: $(echo "${installs[@]}")
+ help      Open README in browser
+ link      This will symlink all the files from $DOTFILES/link/ into ~/,
+           only if files have changed
+ bashit    Install and configure Bash it
+ copy      This will copy all the files from $DOTFILES/copy/ into ~/,
+           only if files have changed
+ install   This will install all the things from $DOTFILES/install/;
+           to prevent installing everything, specify arguments;
+           possible args: $(echo "${installs[@]}")
 
 Options:
-$(echo_flags "\t" "${OPTIONS[@]}")
-
-Notes:
-- If 'link' or 'copy' commands are given, it will also configure
-git-completion and git-prompt for use in the bash shell. See
-http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
-
+ -h  Display this info
+ -u  ?
+ -q  ?
+ -y  Answer YES to all questions
 
 HELP
-exit 0
 }
-parse_arguments "${#OPTIONS[@]}" "${OPTIONS[@]}" $@
 
-# Show help
-has_flag '-h' && help
-has_param 'help' && open https://github.com/clns/dotfiles/blob/master/README.md && exit 0
+yes=
+while getopts "hy" opt; do
+    case $opt in
+        h) help ; exit 0 ;;
+        y) yes="yes" ;;
+        \?) help >&2 ; exit 1 ;;
+    esac
+done
+shift $((OPTIND-1))
 
 #
 # Functions
 #
 
+function is_ubuntu() {
+    [[ "$(cat /etc/issue 2> /dev/null)" =~ Ubuntu ]] || return 1
+}
+
 # Copy files.
-function copy_header() { log_header "Copying files into home directory"; }
+function copy_header() { echo -e "\033[1m== Copying files into home directory ==\033[0m"; }
 function copy_test() {
     if [[ -e "$2" && ! "$(cmp "$1" "$2" 2> /dev/null)" ]]; then
         echo "same file"
@@ -81,14 +105,21 @@ function copy_do() {
 }
 function copy_postprocess() {
     if [[ $(basename $1) == ".gitconfig" ]]; then
-        log_arrow "Enter the email address to use in ~/.gitconfig:"
-        read -p ""
-        sed -i -e "s/{EMAIL}/$REPLY/" $1
+        if [ "$git_email" ]; then
+            sed -i -e "s/{EMAIL}/$git_email/" $1
+        elif [ "$yes" ]; then
+            echo -e "\033[0;33mDon't forget to set the git email address using
+            \`git config --global user.email \`\033[0m"
+        else
+            echo -e "\033[0;34mEnter the email address to use in ~/.gitconfig:\033[0m"
+            read -p ""
+            sed -i -e "s/{EMAIL}/$REPLY/" $1
+        fi
     fi
 }
 
 # Link files.
-function link_header() { log_header "Linking files into home directory"; }
+function link_header() { echo -e "\033[1m== Linking files into home directory ==\033[0m"; }
 function link_test() {
     [[ "$1" -ef "$2" ]] && echo "same file"
     return 0
@@ -139,23 +170,30 @@ function processDir() {
     return 0
 }
 
-# http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
-function gitInBash() {
-    local file="git-completion.bash"
-    local path=$HOME/.$file
-    if [ ! -e $path ] || has_flag '-u'; then
-        curl "https://raw.githubusercontent.com/git/git/master/contrib/completion/$file" \
-        -z "$path" -o "$path" --silent --location
-        echo "$path saved"
+function bashIt() {
+    local dir=$DOTFILES/link/.bash_it
+    if [ ! -d "$dir" ]; then
+        git submodule update --init --depth 1 $dir
     fi
+    if [ -z "$BASH_IT" ]; then
+        BASH_IT=$HOME/$(basename $dir)
+    fi
+    if [ ! -e "$BASH_IT" ]; then
+        ln -s $dir $BASH_IT
+    fi
+    source "$DOTFILES/link/.bashrc"
 
-    local file="git-prompt.sh"
-    local path=$HOME/.$file
-    if [ ! -e $path ] || has_flag '-u'; then
-        curl "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh" \
-        -z "$path" -o "$path" --silent --location
-        echo "$path saved"
-    fi
+    # Enable bash it stuff
+    bash-it enable alias general
+    bash-it enable alias git
+    bash-it enable completion bash-it
+    bash-it enable completion brew
+    bash-it enable completion gh
+    bash-it enable completion git
+    bash-it enable completion git_flow
+    bash-it enable completion gulp
+    bash-it enable completion ssh
+    bash-it enable completion vagrant
 }
 
 #
@@ -163,8 +201,7 @@ function gitInBash() {
 #
 
 # If git is not installed, install it (Ubuntu only since OS X has it installed by default)
-if ! cmd_exists 'git' && is_ubuntu; then
-    log_header "Installing git"
+if [ ! $(type -P 'git') ] && is_ubuntu; then
     if ! apt_repository_exists 'git-core/ppa'; then
         sudo add-apt-repository -y ppa:git-core/ppa # Git repository
         sudo apt-get update
@@ -172,29 +209,11 @@ if ! cmd_exists 'git' && is_ubuntu; then
     sudo apt-get install -y git
 fi
 
-# Clone the repo or update if already cloned
+# Clone the repo if doesn't exist
 if [[ ! -d $DOTFILES ]]; then
-    # $DOTFILES directory doesn't exist, clone it
     git clone https://github.com/clns/dotfiles $DOTFILES
-    cd $DOTFILES
-else
-    cd $DOTFILES
-    if ! has_flag '-q'; then
-        git pull
-        if has_param 'link' || has_param 'copy'; then
-            git submodule update --init --recursive
-        fi
-    fi
 fi
-
-# If no command was used (eg. the first run from GitHub)
-if [[ ${#PARAMS[@]} == 0 ]]; then
-    echo "Run 'dotfiles <command>' to configure further, or 'dotfiles -h' for help."
-fi
-
-if ! has_flag '-q' && (has_param 'copy' || has_param 'link'); then
-    gitInBash
-fi
+cd $DOTFILES
 
 # Tweak file globbing.
 # http://unix.stackexchange.com/a/162589
@@ -205,27 +224,35 @@ shopt -s nullglob
 backup_dir="$DOTFILES/backups/$(date "+%Y_%m_%d-%H_%M_%S")/"
 backup=
 
-# Process the files
-if has_param 'copy'; then processDir "copy"; fi
-if has_param 'link'; then processDir "link"; fi
+case "$1" in
+    help)
+        open https://github.com/clns/dotfiles/blob/master/README.md ; exit 0
+        ;;
+    link)
+        processDir "link"
+        ;;
+    copy)
+        git_email="$(git config --global user.email)"
+        processDir "copy"
+        ;;
+    bashit)
+        bashIt
+        ;;
+    install)
+        echo "not implemented" >&2 ; exit 1
+        ;;
+    "")
+        # If no command was used (eg. the first run from GitHub)
+        help
+        ;;
+    *)
+        help >&2 ; exit 1
+        ;;
+esac
 
 # Alert if backups were made.
 if [[ "$backup" ]]; then
-    log_arrow "Backups were moved to ~/${backup_dir#$HOME/}"
-fi
-
-# Run installs
-if has_param 'install'; then
-    requirements=(brew)
-    development=(atom node go postgresql macvim nginx vim fonts)
-    if [[ ${#PARAMS[@]} > 1 ]]; then
-        all_instals=("${PARAMS[@]:1}")
-    else
-        all_instals=("${requirements[*]}" "${development[*]}")
-    fi
-    for install in ${all_instals[@]}; do
-        source "$DOTFILES/install/${install}.sh"
-    done
+    echo "Backups were moved to ~/${backup_dir#$HOME/}"
 fi
 
 source "$DOTFILES/link/.bashrc"
