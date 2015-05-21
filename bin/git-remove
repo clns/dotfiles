@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Remove a file from a repository, forever
+# https://help.github.com/articles/remove-sensitive-data/
+#
+# Usage: git remove path/to/file.txt
+
+set -e
+
+if [ "x$1" = "x" ]; then
+    echo "Usage:\n git remove <path/to/file>"; exit 1
+fi
+
+git filter-branch --force --index-filter \
+"git rm --cached --ignore-unmatch $1" \
+--tag-name-filter cat -- --all
+
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all
+git gc --prune=now
