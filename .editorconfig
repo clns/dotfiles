@@ -28,4 +28,4 @@ trim_trailing_whitespace = false
 indent_style = tab
 
 [COMMIT_EDITMSG]
-max_line_length = 0
+max_line_length = 70
