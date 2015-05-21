@@ -30,27 +30,20 @@ fi
 #
 # Handle help
 #
-installs=""
-if [ -d $DOTFILES ]; then
-    for inst in $DOTFILES/install/*; do
-        inst=$(basename "$inst"); installs=$(echo "$installs ${inst%.*}")
-    done
-fi
 help() {
 cat <<HELP
-Usage: $(basename "$0") [options] <command> [...args]
+Usage:
+ $(basename "$0") [options] <command> [...args]
 
 Commands:
  help         Open README in browser
- link         This will symlink all the files from $DOTFILES/link/ into ~/,
-              only if files have changed
- bashit       Install and configure Bash it
- copy         This will copy all the files from $DOTFILES/copy/ into ~/,
-              only if files have changed
+ link         Symlink all the files from ~/.dotfiles/link/ into ~/, backing
+              up original files in ~/.dotfiles/backups/, if any
+ copy         Copy all the files from ~/.dotfiles/copy/ into ~/, backing
+              up original files in ~/.dotfiles/backups/, if any
+ bashit       Install and configure bash it
  update       Update the dotfiles repo
- install      ? Install all the things from $DOTFILES/install/;
-              to prevent installing everything, specify arguments;
-              possible args: $(echo "${installs}")
+ install      Install stuff from ~/.dotfiles/install/
  hub-as-git   Set to 'off' to disable aliasing 'hub' as 'git'; default is 'on'
 
 Options:
@@ -63,7 +56,7 @@ Options:
 
 Notes:
  After some commands like 'link' or 'bashit' you may need to source the
- '.bashrc' file so the changes take effect using \`. ~/.bashrc\`
+ '.bashrc' file so the changes take effect using \`. ~/.bashrc\` or \`reload\`
 
 HELP
 }
@@ -235,7 +228,7 @@ case "$1" in
         bashIt
         ;;
     install)
-        echo "not implemented" >&2 ; exit 1
+        ./install/$2.sh
         ;;
     update)
         git stash && git pull --rebase && git stash pop

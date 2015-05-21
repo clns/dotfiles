@@ -14,6 +14,9 @@ _dotfiles() {
     case "${prev}" in
         install)
             local args="not implemented"
+            for inst in $DOTFILES/install/[!_]*.sh; do
+                inst=$(basename "$inst"); args=$(echo "$args ${inst%.*}")
+            done
             COMPREPLY=( $(compgen -W "${args}" -- ${cur}) )
             return 0
       			;;
