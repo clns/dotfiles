@@ -33,7 +33,7 @@ fi
 help() {
 cat <<HELP
 Usage:
- $(basename "$0") [options] <command> [...args]
+ dotfiles [<options>] <command> [<args...>]
 
 Commands:
  help         Open README in browser if no args are given;
@@ -163,7 +163,7 @@ bashIt() {
         echo "Bash it can only run in a bash shell" >&2 && exit 1
 
     local dir=$DOTFILES/link/.bash_it
-    if [ ! -d "$dir" ]; then
+    if [ ! -e "$dir/bash_it.sh" ]; then
         git submodule update --init --depth 1 $dir
     fi
     if [ -z "$BASH_IT" ]; then

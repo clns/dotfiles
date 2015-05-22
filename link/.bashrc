@@ -13,7 +13,7 @@ export COPYFILE_DISABLE=1
 # https://github.com/Bash-it/bash-it
 
 export BASH_IT="$HOME/.bash_it"
-if [ -d "$BASH_IT" ]; then
+if [ -e "$BASH_IT/bash_it.sh" ]; then
 
     # Your place for hosting Git repos. I use this for private repos.
     export GIT_HOSTING='clns@github.com'
@@ -24,6 +24,7 @@ if [ -d "$BASH_IT" ]; then
     # Load Bash It
     source $BASH_IT/bash_it.sh
 fi
+
 
 # Source all files in "source"
 function src() {
@@ -40,6 +41,7 @@ fi
 }
 
 src
+
 
 # http://git-scm.com/book/en/v2/Git-in-Other-Environments-Git-in-Bash
 # https://github.com/git/git/blob/master/contrib/completion/git-completion.bash
