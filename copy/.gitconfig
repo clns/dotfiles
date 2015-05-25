@@ -20,5 +20,6 @@
     # Show files ignored by git
     ign = ls-files -o -o --exclude-standard
     size = count-objects -H
+    del-ref = update-ref -d
 [pull]
     rebase = true
