@@ -7,17 +7,28 @@ Usage:
 
 Options:
  -g <no>    Filter commits with subject greater than <no> chars
- -e         Edit commit message
- -o         Options to pass to git-log, including revision range
+ -c         Commit hashes or revision range
+ -f         The format to send to git-show; ignored if -e is used
+ -e         Edit the commit message; to abort a batch edit, simply leave a
+            message unchanged and exit the editor
+
+Examples:
+ git commit-msg -g 50
+ git commit-msg -g 50 -f '--oneline' | awk '{ printf \$0 " "; \$1=""; print "(" length(\$0) ")" }'
+ git commit-msg -c '39ae4f6 084d119'
+ git commit-msg -c 'HEAD~2..'
+ git commit-msg -c "\$(g log --pretty='%h' -E --grep='Make' --branches)"
+
+ * All examples accept the -e option to edit the filtered commits.
+
+Notes:
+ Editing a commit message WILL CHANGE THE COMMIT HASH for that commit and
+ all subsequent commits. For this reason you should only change commits
+ that exist locally and were never pushed to a remote server.
 
 Revision range:
  - single commit: <rev>^!, e.g. HEAD^! 55152c7^!
  See http://git-scm.com/docs/gitrevisions for more details.
-
-Example:
- git commit-msg -o '55152c7^!'
- git commit-msg -g 50
- git commit-msg -o '-E --grep="pattern"'
 
 HELP
 }
@@ -32,19 +43,28 @@ git_editor() {
 	eval "$GIT_EDITOR" '"$@"'
 }
 
-rev_options=
+cmd="git log --pretty='%H'"
+format=
 tmp_dir=
-while getopts "g:eo:" opt; do
+while getopts "g:c:f:e" opt; do
     case $opt in
         g)
-            rev_options="$rev_options -E --grep='\A.{$OPTARG,}'"
+            cmd="git log --branches -E --grep='^.{$OPTARG,}' --pretty='%H %s' \
+| awk '{h=\$1; \$1=\"\"; if (length(\$0)>$OPTARG) print h }'"
             ;;
         e)
-            tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t 'commit-msg-edit')
-            if [ "$?" != "0" ]; then echo "Cannot create tmp dir" >&2; exit 1; fi
+            tmp_dir=$(mktemp -d 2>/dev/null || \
+                mktemp -d -t 'commit-msg-edit' 2>/dev/null || \
+                (dir="/tmp/commit-msg-$$"; mkdir -p "$dir" && echo "$dir"))
+            if [ "$?" != "0" ] || [ ! -d "$tmp_dir" ]; then
+                echo "Cannot create tmp dir" >&2; exit 1
+            fi
             ;;
-        o)
-            rev_options="$rev_options $OPTARG"
+        c)
+            cmd="git show -s --format='%H %at' $OPTARG | sort -k2 -g -r | cut -f 1 -d ' '"
+            ;;
+        f)
+            format="$OPTARG"
             ;;
         \?) help >&2 ; exit 1 ;;
     esac
@@ -52,8 +72,8 @@ done
 shift $((OPTIND-1))
 
 if [ "$tmp_dir" ]; then # it's an edit
-    for sha in $(eval "git log --pretty='%H' $rev_options"); do
-        raw="$(git log --pretty='%B' $sha^!)"
+    for sha in $(eval "$cmd"); do
+        raw="$(git show -s --format='%B' $sha)"
         file="$tmp_dir/$sha"
         echo "$raw" > "$file"
         git_editor "$file"
@@ -61,6 +81,11 @@ if [ "$tmp_dir" ]; then # it's an edit
         if [ "$?" != "0" ]; then rm -rf "$tmp_dir"; echo "Failed to edit file" >&2; exit 1; fi
         if [ "$(cat $file)" = "$raw" ]; then
             rm "$file"
+            printf "Do you want to continue? If you choose no, nothing will be changed. [n] "
+            read -n 1 REPLY
+            if [ "$REPLY" = "n" ]; then
+                echo " aborted..."; exit 0
+            fi
         fi
     done
 
@@ -76,5 +101,5 @@ fi' -- $sha^.. --branches
 
     rm -rf "$tmp_dir"
 else
-    eval "git log $rev_options"
+    git show -s $format $(eval "$cmd")
 fi
