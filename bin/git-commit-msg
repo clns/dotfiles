@@ -1,0 +1,80 @@
+#!/bin/sh
+
+help() {
+cat <<HELP
+Usage:
+ git commit-msg [<options>]
+
+Options:
+ -g <no>    Filter commits with subject greater than <no> chars
+ -e         Edit commit message
+ -o         Options to pass to git-log, including revision range
+
+Revision range:
+ - single commit: <rev>^!, e.g. HEAD^! 55152c7^!
+ See http://git-scm.com/docs/gitrevisions for more details.
+
+Example:
+ git commit-msg -o '55152c7^!'
+ git commit-msg -g 50
+ git commit-msg -o '-E --grep="pattern"'
+
+HELP
+}
+
+if [ "$#" = "0" ]; then help; exit 0; fi
+
+git_editor() {
+	if test -z "${GIT_EDITOR:+set}"
+	then
+		GIT_EDITOR="$(git var GIT_EDITOR)" || return $?
+	fi
+	eval "$GIT_EDITOR" '"$@"'
+}
+
+rev_options=
+tmp_dir=
+while getopts "g:eo:" opt; do
+    case $opt in
+        g)
+            rev_options="$rev_options -E --grep='\A.{$OPTARG,}'"
+            ;;
+        e)
+            tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t 'commit-msg-edit')
+            if [ "$?" != "0" ]; then echo "Cannot create tmp dir" >&2; exit 1; fi
+            ;;
+        o)
+            rev_options="$rev_options $OPTARG"
+            ;;
+        \?) help >&2 ; exit 1 ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ "$tmp_dir" ]; then # it's an edit
+    for sha in $(eval "git log --pretty='%H' $rev_options"); do
+        raw="$(git log --pretty='%B' $sha^!)"
+        file="$tmp_dir/$sha"
+        echo "$raw" > "$file"
+        git_editor "$file"
+
+        if [ "$?" != "0" ]; then rm -rf "$tmp_dir"; echo "Failed to edit file" >&2; exit 1; fi
+        if [ "$(cat $file)" = "$raw" ]; then
+            rm "$file"
+        fi
+    done
+
+    # Change commit messages starting from the oldest commit
+    # and use all available branches
+    git filter-branch -f --msg-filter 'dir='"$tmp_dir"'
+file="$dir/$GIT_COMMIT";
+if [ -e "$file" ]; then
+    cat "$file";
+else
+    cat;
+fi' -- $sha^.. --branches
+
+    rm -rf "$tmp_dir"
+else
+    eval "git log $rev_options"
+fi
