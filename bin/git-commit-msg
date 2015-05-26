@@ -73,19 +73,23 @@ shift $((OPTIND-1))
 
 if [ "$tmp_dir" ]; then # it's an edit
     for sha in $(eval "$cmd"); do
-        raw="$(git show -s --format='%B' $sha)"
         file="$tmp_dir/$sha"
-        echo "$raw" > "$file"
+        git show -s --format='%B' $sha > $file
+        echo "# Please enter the new commit message. Lines starting with '#'
+# will be ignored, and an empty message aborts the edit.
+# Everything below this line will be ignored. Do not remove this comment!
+" >> $file
+        git show \
+            --format="commit %h%nAuthor: %an <%ae>%nDate:   %ad%nFound in: \
+$(git branch --contains $sha | awk '{printf $0 "  "}')" \
+            --stat $sha >> $file
         git_editor "$file"
 
         if [ "$?" != "0" ]; then rm -rf "$tmp_dir"; echo "Failed to edit file" >&2; exit 1; fi
-        if [ "$(cat $file)" = "$raw" ]; then
-            rm "$file"
-            printf "Do you want to continue? If you choose no, nothing will be changed. [n] "
-            read -n 1 REPLY
-            if [ "$REPLY" = "n" ]; then
-                echo " aborted..."; exit 0
-            fi
+        echo "$(awk '/^#/ { exit } { print }' $file)" > $file
+        if [ -z "$(cat $file)" ]; then
+            echo "Aborting edit due to empty commit message."
+            exit 0
         fi
     done
 
