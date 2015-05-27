@@ -1,6 +1,5 @@
 [user]
     name = Calin Seciu
-    email = {EMAIL}
 [core]
     autocrlf = input
     fileMode = true
@@ -9,6 +8,11 @@
     ui = auto
 [push]
     default = simple
+[pull]
+    rebase = true
+[merge "ours"]
+    # http://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Merge-Strategies
+    driver = true
 [alias]
     s = status --short --branch
     lg = log --oneline --all --graph --decorate
@@ -21,5 +25,3 @@
     ign = ls-files -o -o --exclude-standard
     size = count-objects -H
     del-ref = update-ref -d
-[pull]
-    rebase = true
