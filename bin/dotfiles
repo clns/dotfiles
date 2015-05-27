@@ -93,14 +93,14 @@ copy_do() {
 copy_postprocess() {
     if [ "$(basename $1)" = ".gitconfig" ]; then
         if [ "$git_email" ]; then
-            sed -i -e "s/{EMAIL}/$git_email/" $1
+            git config --global user.email "$git_email"
         elif [ "$yes" ]; then
             printf "\033[1;33mDon't forget to set the git email address using \
 \`git config --global user.email <email>\`\033[0m\n"
         else
             printf "\033[0;36mEnter the email address to use in ~/.gitconfig:\033[0m\n"
             read REPLY
-            sed -i -e "s/{EMAIL}/$REPLY/" $1
+            git config --global user.email "$REPLY"
         fi
     fi
 }
