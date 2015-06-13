@@ -3,21 +3,21 @@
 help() {
 cat <<HELP
 Usage:
- git commit-msg [<options>]
+ git commit-msg [<options>] [<commit-hash(es)> or <revision-range>]
 
 Options:
- -g <no>    Filter commits with subject greater than <no> chars
- -c         Commit hashes or revision range
- -f         The format to send to git-show; ignored if -e is used
- -e         Edit the commit message; to abort a batch edit, simply leave a
-            message unchanged and exit the editor
+ -g <no>    Filter commits with subject greater than <no> chars;
+            any arguments will be ignored if this is used
+ -f         The format to send to git-show for displaying commits;
+            ignored if -e is used
+ -e         Edit the commit message
 
 Examples:
  git commit-msg -g 50
  git commit-msg -g 50 -f '--oneline' | awk '{ printf \$0 " "; \$1=""; print "(" length(\$0) ")" }'
  git commit-msg -c '39ae4f6 084d119'
  git commit-msg -c 'HEAD~2..'
- git commit-msg -c "\$(g log --pretty='%h' -E --grep='Make' --branches)"
+ git commit-msg -c "\$(git log --pretty='%h' -E --grep='Make' --branches)"
 
  * All examples accept the -e option to edit the filtered commits.
 
@@ -43,7 +43,7 @@ git_editor() {
 	eval "$GIT_EDITOR" '"$@"'
 }
 
-cmd="git log --pretty='%H'"
+cmd=
 format=
 tmp_dir=
 while getopts "g:c:f:e" opt; do
@@ -61,6 +61,7 @@ while getopts "g:c:f:e" opt; do
             fi
             ;;
         c)
+            # not used anymore, give this as argument(s)
             cmd="git show -s --format='%H %at' $OPTARG | sort -k2 -g -r | cut -f 1 -d ' '"
             ;;
         f)
@@ -70,6 +71,10 @@ while getopts "g:c:f:e" opt; do
     esac
 done
 shift $((OPTIND-1))
+
+if [ -z "$cmd" ]; then
+    cmd="git show -s --format='%H %at' $@ | sort -k2 -g | cut -f 1 -d ' '"
+fi
 
 if [ "$tmp_dir" ]; then # it's an edit
     for sha in $(eval "$cmd"); do
@@ -91,6 +96,7 @@ $(git branch --contains $sha | awk '{printf $0 "  "}')" \
             echo "Aborting edit due to empty commit message."
             exit 0
         fi
+        if [ -z "$oldest_sha"]; then oldest_sha=$sha; fi
     done
 
     # Change commit messages starting from the oldest commit
@@ -101,9 +107,12 @@ if [ -e "$file" ]; then
     cat "$file";
 else
     cat;
-fi' -- $sha^.. --branches
+fi' -- $oldest_sha^.. --branches
 
     rm -rf "$tmp_dir"
 else
-    git show -s $format $(eval "$cmd")
+    what="$(eval $cmd)"
+    if [ "$what" ]; then
+        git show -s $format $(eval "$cmd")
+    fi
 fi
