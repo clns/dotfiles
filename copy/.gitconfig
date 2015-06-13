@@ -10,6 +10,8 @@
     default = simple
 [pull]
     rebase = true
+[rebase]
+	autoSquash = true
 [merge "ours"]
     # http://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Merge-Strategies
     driver = true
