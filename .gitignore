@@ -2,4 +2,4 @@
 *.swp
 /backups/
 /link/.vim/sessions/
-
+node_modules
