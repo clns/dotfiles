@@ -11,7 +11,7 @@
 
 git log "${1:-`git branch | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`}" |
   grep Author: |
-  sed 's/Author: \(.*\) <.*/\1/' |
+  sed 's/Author: \(.*\)/\1/' |
   sort |
   uniq -c |
   sort -rn |
