@@ -8,4 +8,4 @@ _z_completion() {
     COMPREPLY=($(compgen -W "$(ls -ap $HOME/Projects/ | grep -E '^[^.]{2}.*/')" -- ${cur}))
     return 0
 }
-complete -F _z_completion z
+complete -F _z_completion -o nospace z
