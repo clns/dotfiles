@@ -15,9 +15,9 @@ Options:
 Examples:
  git commit-msg -g 50
  git commit-msg -g 50 -f '--oneline' | awk '{ printf \$0 " "; \$1=""; print "(" length(\$0) ")" }'
- git commit-msg -c '39ae4f6 084d119'
- git commit-msg -c 'HEAD~2..'
- git commit-msg -c "\$(git log --pretty='%h' -E --grep='Make' --branches)"
+ git commit-msg 39ae4f6 084d119
+ git commit-msg HEAD~2..
+ git commit-msg \$(git log --pretty='%h' -E --grep='Make' --branches)
 
  * All examples accept the -e option to edit the filtered commits.
 
