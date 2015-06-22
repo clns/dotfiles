@@ -3,32 +3,53 @@
 help() {
 cat <<HELP
 Usage:
- git commit-msg [<options>] [<commit-hash(es)> or <revision-range>]
+ git commit-msg [<options>] <commit-hash(es)> or <revision-range>
+
+Edit commit messages easily.
 
 Options:
  -g <no>    Filter commits with subject greater than <no> chars;
             any arguments will be ignored if this is used
  -f         The format to send to git-show for displaying commits;
             ignored if -e is used
- -e         Edit the commit message
+ -m <msg>   Use the given <msg> as the commit message; this works similarly
+            to 'git commit -m'; note that will work only for a single commit
+ -e         Edit the commit message(s); without this option the commits will
+            only be displayed, based on the given filters.
 
 Examples:
- git commit-msg -g 50
- git commit-msg -g 50 -f '--oneline' | awk '{ printf \$0 " "; \$1=""; print "(" length(\$0) ")" }'
- git commit-msg 39ae4f6 084d119
- git commit-msg HEAD~2..
- git commit-msg \$(git log --pretty='%h' -E --grep='Make' --branches)
-
  * All examples accept the -e option to edit the filtered commits.
+ Run it without this option first to see what will be edited.
+
+ # the last commit
+ git commit-msg HEAD
+
+ # edit the last commit without the editor
+ git commit-msg -e -m "Add feature X" -m "Body for this commit" HEAD
+
+ # a list of commits
+ git commit-msg b1c95d5 5ea7762
+
+ # last 2 commits on the current branch
+ git commit-msg HEAD~2..
+
+ # all commits that contain 'Make', from all branches
+ git commit-msg \$(git rev-list -E --grep='Make' --branches)
+
+ # all commits that have more than 50 chars in subject
+ git commit-msg -g 50
+
+ # display length for all commits with subject greater than 50 chars
+ git commit-msg -g 50 -f '--oneline' | awk '{ printf \$0 " "; \$1=""; print "(" length(\$0) ")" }'
 
 Notes:
  Editing a commit message WILL CHANGE THE COMMIT HASH for that commit and
- all subsequent commits. For this reason you should only change commits
+ ALL SUBSEQUENT commits. For this reason you should only change commits
  that exist locally and were never pushed to a remote server.
 
-Revision range:
- - single commit: <rev>^!, e.g. HEAD^! 55152c7^!
- See http://git-scm.com/docs/gitrevisions for more details.
+ Commits will always appear in chronological order, similarly to 'git rebase'.
+
+See http://git-scm.com/docs/gitrevisions for revision ranges.
 
 HELP
 }
@@ -46,7 +67,8 @@ git_editor() {
 cmd=
 format=
 tmp_dir=
-while getopts "g:c:f:e" opt; do
+message=
+while getopts "g:f:m:e" opt; do
     case $opt in
         g)
             cmd="git log --branches -E --grep='^.{$OPTARG,}' --pretty='%H %s' \
@@ -67,31 +89,51 @@ while getopts "g:c:f:e" opt; do
         f)
             format="$OPTARG"
             ;;
+        m)
+            message="${message}${OPTARG}\n\n"
+            ;;
         \?) help >&2 ; exit 1 ;;
     esac
 done
 shift $((OPTIND-1))
 
-if [ -z "$cmd" ]; then
+if [ $# -ne 0 -a -z "$cmd" ]; then
     cmd="git show -s --format='%H %at' $@ | sort -k2 -g | cut -f 1 -d ' '"
 fi
 
+hashes=$(eval "$cmd")
+
+if [ -z "$hashes" ]; then
+    echo "Error: nothing to do" >&2
+    exit
+fi
+if [ "$message" -a $(echo "$hashes" | wc -w) -gt 1 ]; then
+    echo "Error: message '-m' can be given only when editing a single commit" >&2
+    exit 1
+fi
+
 if [ "$tmp_dir" ]; then # it's an edit
-    for sha in $(eval "$cmd"); do
+    for sha in $hashes; do
         file="$tmp_dir/$sha"
-        git show -s --format='%B' $sha > $file
-        echo "# Please enter the new commit message. Lines starting with '#'
+
+        if [ "$message" ]; then
+            echo "$message" > $file
+        else
+            git show -s --format='%B' $sha > $file
+            echo "# Please enter the new commit message. Lines starting with '#'
 # will be ignored, and an empty message aborts the edit.
 # Everything below this line will be ignored. Do not remove this comment!
 " >> $file
-        git show \
-            --format="commit %h%nAuthor: %an <%ae>%nDate:   %ad%nFound in: \
-$(git branch --contains $sha | awk '{printf $0 "  "}')" \
-            --stat $sha >> $file
-        git_editor "$file"
+            git show \
+                --format="commit %h%nAuthor: %an <%ae>%nDate:   %ad%nFound in: \
+    $(git branch --contains $sha | awk '{printf $0 "  "}')" \
+                --stat $sha >> $file
+            git_editor "$file"
 
-        if [ "$?" != "0" ]; then rm -rf "$tmp_dir"; echo "Failed to edit file" >&2; exit 1; fi
-        echo "$(awk '/^#/ { exit } { print }' $file)" > $file
+            if [ "$?" != "0" ]; then rm -rf "$tmp_dir"; echo "Failed to edit file" >&2; exit 1; fi
+            echo "$(awk '/^#/ { exit } { print }' $file)" > $file
+        fi
+
         if [ -z "$(cat $file)" ]; then
             echo "Aborting edit due to empty commit message."
             exit 0
@@ -111,8 +153,5 @@ fi' -- $oldest_sha^.. --branches
 
     rm -rf "$tmp_dir"
 else
-    what="$(eval $cmd)"
-    if [ "$what" ]; then
-        git show -s $format $(eval "$cmd")
-    fi
+    git show -s $format $hashes
 fi
