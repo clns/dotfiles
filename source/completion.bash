@@ -35,3 +35,14 @@ _dotfiles() {
     return 0
 }
 complete -F _dotfiles dotfiles
+
+_z_completion() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local dir=$(dirname "${cur}a")/
+    if [ "$dir" = "./" ]; then dir=; fi
+    local file=$(basename "$cur")
+    if [ "$file/" = "$dir" ]; then file=; fi
+    COMPREPLY=($(compgen -W "$(cd $HOME/Projects && ls -adF $dir* | grep -E '/$')" -- ${dir}${file}))
+    return 0
+}
+complete -F _z_completion -o nospace z
