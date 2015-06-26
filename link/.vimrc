@@ -29,6 +29,7 @@ set autoread		" Set to auto read when a file is changed from outside
 set so=7		" Set 7 lines to the cursor - when moving verically using j/k
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 set hidden
+set completeopt-=preview " disable Scratch/Preview window http://stackoverflow.com/a/15963488/1104534
 
 let mapleader = ","
 
@@ -104,4 +105,3 @@ if !exists(":DiffOrig")
   command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 		  \ | wincmd p | diffthis
 endif
-
