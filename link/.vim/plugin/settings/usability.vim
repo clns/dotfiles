@@ -1,6 +1,14 @@
 " Invisibles
 nmap <Leader>l :set list!<CR>	" map shortcut key to toggle invisibles
-set listchars=tab:▸\ ,eol:¬	" set invisible characters for tab and eol
+if has("multi_byte")
+  scriptencoding utf-8
+  set encoding=utf-8
+  if has("win16") || has("win32")
+    set listchars=precedes:«,extends:»,tab:·\ ,eol:¬	" set invisible characters
+  else
+    set listchars=precedes:«,extends:»,tab:▸\ ,eol:¬	" set invisible characters
+  endif
+endif
 
 set list	" needs to stay like this until tabs are taken care of per filetype
 " Tabs and spaces
