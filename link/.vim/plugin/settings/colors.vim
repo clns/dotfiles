@@ -1,4 +1,4 @@
-if ! has("win16") && ! has("win32")
+if (! has("win16") && ! has("win32")) || has("gui_running")
     set background=dark
 
     " molokai https://github.com/fatih/molokai
