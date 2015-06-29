@@ -46,6 +46,12 @@ vmap <D-]> >gv
 " Working directory
 nnoremap <Leader>cd :lcd %:p:h<CR>:pwd<CR>
 
-" Comment lines with D-/
-map <D-/> :TComment<CR>
-vmap <D-/> :TComment<CR>gv
+" Comment lines with D-/ (on OS X) or <Leader>/ (elsewhere)
+" http://stackoverflow.com/questions/10948321/setting-ctrl-for-comment-and-uncomment-in-vim
+if has("unix") && system("uname -s") == "Darwin"
+    map <D-/> :TComment<CR>
+    vmap <D-/> :TComment<CR>gv
+else
+    map <Leader>/ :TComment<CR>
+    vmap <Leader>/ :TComment<CR>gv
+endif
