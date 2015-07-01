@@ -17,10 +17,10 @@ set number		" show line numbers
 set showcmd		" display incomplete commands
 set cursorline		" highlight current line
 set incsearch		" do incremental searching
-set ignorecase		" ignore case when searching
+"set ignorecase		" ignore case when searching
 set smartcase		" try to be smart about cases when searching
 set cmdheight=1		" height of the command bar
-"set magic		" turn magic on for regular expressions
+set magic		" turn magic on for regular expressions
 set showmatch		" show matching brackets when text indicator is over them
 set mat=2		" how many tenths of a second to blink when matching brackets
 set wildmenu		" visual autocomplete for command menu
