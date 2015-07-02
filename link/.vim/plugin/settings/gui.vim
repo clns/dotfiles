@@ -1,5 +1,5 @@
 if has("gui_running")
-	
+
 	" Disable scrollbars (real hackers don't use scrollbars for navigation!)
 	set guioptions-=r
 	set guioptions-=R
@@ -10,7 +10,7 @@ if has("gui_running")
 	if has("mac") || has("macunix")
 			set gfn=Source\ Code\ Pro:h14,Monaco:h10
 	elseif has("win16") || has("win32")
-			set gfn=Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
+			set guifont=Consolas:h12
 	elseif has("linux")
 			set gfn=Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
 	elseif has("unix")
