@@ -18,3 +18,5 @@ au FileType go nmap <leader>t <Plug>(go-test-compile)
 au FileType go nmap <Leader>d <Plug>(go-doc)
 au FileType go nmap <Leader>f :GoImports<CR>
 au FileType go nmap <Leader>ve <Plug>(go-vet)
+
+au FileType go au BufWritePost,FileWritePost <buffer> execute 'GoLint'
