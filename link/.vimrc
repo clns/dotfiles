@@ -30,6 +30,7 @@ set so=7		" Set 7 lines to the cursor - when moving verically using j/k
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 set hidden
 set completeopt-=preview " disable Scratch/Preview window http://stackoverflow.com/a/15963488/1104534
+set laststatus=2
 
 let mapleader = ","
 
