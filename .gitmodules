@@ -67,3 +67,6 @@
 [submodule "bash-it"]
 	path = link/.bash_it
 	url = https://github.com/Bash-it/bash-it
+[submodule "vim-fugitive"]
+	path = link/.vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
