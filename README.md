@@ -75,6 +75,14 @@ like `gocode`, `godef`, `goimports` etc. You can install them automatically
 from Vim by using the `:GoInstallBinaries` command. It will put all
 necessary binaries in your `$GOBIN`, or `$GOPATH/bin` if not set.
 
+#### Vim plugins
+
+To install new plugins use:
+
+```sh
+git submodule add --name <name> <url> link/.vim/bundle/<name>
+```
+
 ## Credits
 
 https://dotfiles.github.io  
