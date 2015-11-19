@@ -4,6 +4,7 @@
     autocrlf = input
     fileMode = true
     editor = vim
+    ignorecase = false
 [color]
     ui = auto
 [push]
@@ -27,3 +28,12 @@
     ign = ls-files -o -o --exclude-standard
     size = count-objects -H
     del-ref = update-ref -d
+    serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
+[credential]
+    helper = osxkeychain
+[filter "lfs"]
+    required = true
+    clean = git-lfs clean %f
+    smudge = git-lfs smudge %f
+[merge]
+    tool = opendiff
